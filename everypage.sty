@@ -1,0 +1,30 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{everypage}[2006/06/30 R1.0]
+
+\newcommand{\sc@everypage@hook}{}
+\newcommand{\sc@nextpage@hook}{}
+
+\newcommand*{\AddEverypageHook}[1]{%
+  \g@addto@macro\sc@everypage@hook{#1}}
+
+\newcommand*{\AddNextpageHook}[1]{%
+  \g@addto@macro\sc@nextpage@hook{#1}}
+
+\newcommand*{\sc@everypage@init}{%
+  %% Save the normal outputpage routine
+  \let\sc@outputpage\@outputpage
+  %% Redefine the outpage routine
+  \def\@outputpage{%
+    \let\sc@begindvi\@begindvi
+    \def\@begindvi{%
+      \sc@everypage@hook
+      \sc@nextpage@hook
+      \let\@begindvi\sc@begindvi
+      \@begindvi}%
+    \gdef\sc@nextpage@hook{}%
+    \sc@outputpage    
+  }}
+
+\AtBeginDocument{\sc@everypage@init}
+
+\endinput
