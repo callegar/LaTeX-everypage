@@ -1,0 +1,238 @@
+% \iffalse meta-comment
+%
+% Copyright 2006
+% Sergio Callegari <sergio.callegari@gmail.com>
+%
+% ---------------------------------------------
+% This file is part of the everypage package,
+% a contribution to the LaTeX2e system.
+% ---------------------------------------------
+%
+% It may be distributed and/or modified under the conditions of the
+% LaTeX Project Public License, either version 1.3 of this licence, or
+% any later version. The latest version of this license is at
+% http://www.latex-project.org/lppl.txt and version 1.3 is part
+% of all distributions of LaTeX version 2003/06/01 or later.
+%
+% This work has the LPPL maintenance status "author-maintained".
+%
+% This program consists of the files listed in the README file
+% included in the package.
+%
+%<*driver>
+\documentclass{ltxdoc}
+\usepackage{mathptmx, helvet, courier}
+\EnableCrossrefs
+\DoNotIndex{\def, \gdef, \let, \NeedsTexFormat, \newcommand,
+  \Providespackage}
+\CodelineIndex
+\RecordChanges
+\begin{document}
+  \DocInput{everypage.dtx}
+\end{document}
+%</driver>
+%
+% \fi
+%
+% \CheckSum{41}
+%
+% \def\filename{everypage.dtx}
+% \def\fileversion{1.0}
+% \def\filedate{2006/06/30}
+% \def\docdate{2006/06/30}
+%
+% \newcommand*{\Lpack}[1]{\textsf {#1}}           ^^A typeset a package
+% \newcommand*{\Lopt}[1]{\textsf {#1}}            ^^A typeset an option
+% \newcommand*{\file}[1]{\texttt {#1}}            ^^A typeset a file
+% \newcommand*{\Lcount}[1]{\textsl {\small#1}}    ^^A typeset a counter
+% \newcommand*{\pstyle}[1]{\textsl {#1}}          ^^A typeset a pagestyle
+% \newcommand*{\Lenv}[1]{\texttt {#1}}            ^^A typeset an environment
+%
+% \title{The \Lpack{everypage} package\thanks{This file
+%     (\texttt{\filename}) has version number \fileversion, last
+%     revised \filedate.}}
+%
+% \author{%
+%   Sergio Callegari\thanks{Sergio Callegari can be reached at
+%       \texttt{sergio.callegar at gmail dot com}}} 
+%
+% \date{\docdate}
+%
+% \maketitle
+%
+% \begin{abstract}
+%   The \Lpack{everypage} package extends \LaTeX\ providing hooks to do
+%   actions on every page or on the current page. Specifically, actions
+%   are performed \emph{before} the page is shipped, so they can be
+%   used to put watermarks \emph{in the background} of a page, or to
+%   set the page layout. The package reminds in some sense
+%   \Lpack{bobhook} by Karsten Tinnefeld, but it differs in the way in
+%   which the hooks are implemented, as detailed in the following.
+% \end{abstract}
+% 
+% \section{Introduction}
+% 
+% This program adds two \LaTeX\ hooks that get run when document
+% pages are finalized and output to the dvi or pdf
+% file. Specifically, one hook gets executed on every page, while the
+% other is executed for the current page. Hook actions are are performed
+% \emph{before} the page is output on the medium, and this is
+% important to be able to play with the page layout or to put things
+% \emph{behind} the page contents (e.g., watermarks such as an image,
+% framing, the ``DRAFT'' word, and the like).
+% 
+% The package reminds in some sense \Lpack{bobhook} by Karsten
+% Tinnefeld, but it differs in the way in which the hooks are
+% implemented:
+% 
+% \begin{enumerate}
+% \item there is no formatting inherent in the hooks. If one wants to
+%   put some watermark on a page, it is his own duty to put in the
+%   hook the code to place the watermark in the right position. Also
+%   note that the hooks code should \emph{eat up no space} in the page.
+%   Again, if the hooks are meant to place some material on the page,
+%   it is the duty of the hook programmer to put code in the hooks to
+%   pretend that the material has zero width and zero height.
+%   The implementation is \emph{lighter} than the \Lpack{bobhook} one,
+%   and possibly more flexible, since one is not limited by any
+%   pre-coded formatting for the hooks. On the other hand it is
+%   possibly more difficult to use. Nonetheless, it is easy to think
+%   of other packages relying on \Lpack{bobhook} and delivering more
+%   user-friendly \emph{task specific} interfaces. The packages
+%   \Lpack{flippdf} meant to deliver mirrored pages in a PDF document
+%   and \Lpack{draftwatermark} meant to add a watermark to document
+%   pages are examples of this.
+% \item similarly to \Lpack{bobhook} and \Lpack{watermark}, the
+%   package relies on the manipolatoin of the internal \LaTeX\ macro
+%   |\@begindvi| to do the job. However, the redefinition of
+%   |\@begindvi| is here postponed as much as possible, striving to
+%   avoid interference with other packages using |\AtBeginDvi| or
+%   anyway manipulating |\@begindvi|. Specifically \Lpack{everypage}
+%   makes no special assumption on the initial code that |\@begindvi|
+%   might contain.
+% \end{enumerate}
+% 
+% \section{User interface}
+% \DescribeMacro{\AddEverypageHook}\DescribeMacro{\AddThispageHook}
+% The |\AddEverypageHook| accepts one argument and adds it to the list
+% of hooks that are run before every page is output. The
+% |\AddThispageHook| accepts one argument and adds it to the list of
+% hooks that are run before the current page is output.
+%
+% Note that once hooks are stacked, there is no way to unstack them,
+% nor to clear them. In order to have hooks that get run only when
+% specific conditions are met, conditionals must be included in the
+% hooks.
+% 
+% Also note that no particular assumption is made on the \LaTeX\
+% output driver, so \Lpack{everypage} should work equally well with
+% \LaTeX\ and pdf\LaTeX. Furthermore, the package should work equally
+% well with dvi, dvips, etc.\@ output drivers. Obviously, the final
+% compatibility with the different output drivers depends on the
+% actual code that is placed in the hooks.
+%
+% For usage examples, please see the \Lpack{flippdf} and
+% \Lpack{draftwatermark} packages.
+% 
+% \StopEventually {}
+% 
+% \section{Implementation}
+%
+% Announce the name and version of the package, which requires
+% \LaTeXe.
+%    \begin{macrocode}
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{everypage}%
+  [2006/06/30 1.0 Hooks to run on every page]
+%    \end{macrocode}
+%
+% \begin{macro}{\sc@everypage@hook}\begin{macro}{\sc@everypage@hook}
+% Define internal macros to hold the hooks and initialize them to
+% contain nothing.
+%    \begin{macrocode}
+\newcommand{\sc@everypage@hook}{}
+\newcommand{\sc@thispage@hook}{}
+%    \end{macrocode}
+% \end{macro}\end{macro}
+%
+% \begin{macro}{\AddEverypageHook}\begin{macro}{\AddThispageHook}
+% Define the commands used to add the hooks.
+%    \begin{macrocode}
+\newcommand*{\AddEverypageHook}[1]{%
+  \g@addto@macro\sc@everypage@hook{#1}}
+\newcommand*{\AddThispageHook}[1]{%
+  \g@addto@macro\sc@thispage@hook{#1}}
+%    \end{macrocode}
+% \end{macro}\end{macro}
+%
+% \begin{macro}{\sc@ep@init}
+% The internal initialization code of the package. The package works
+% by redefining the normal |\@outputpage| routine that takes care of
+% outputting pages, so that the modified version first calls a special
+% preamble, and then calls the original |\@outputpage| code. 
+%    \begin{macrocode}
+\newcommand*{\sc@ep@init}{%    
+  \let\sc@op@saved\@outputpage
+  \def\@outputpage{%
+    \sc@op@preamble
+    \sc@op@saved}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\sc@op@preamble}
+% The outputpage preamble contains instructions to redefine the
+% |\@begindvi| macro that is called at every page output by the
+% original |\@outputpage| code. Then, the hooks for the current page
+% are cleared.  Specifically, the |\@begindvi| macro is redefined so
+% that first the hooks are called and then the normal |\@begindvi| is
+% restored to the original code and run. Restoring |\@begindvi| before
+% actually running it is indispensible, because a usual trick of the
+% code that one normally finds in |\@begindvi| is to redefine
+% |\@begindvi| itself.
+%    \begin{macrocode}
+\newcommand*{\sc@op@preamble}{%
+  \let\sc@begindvi\@begindvi
+  \def\@begindvi{%
+    \sc@everypage@hook
+    \sc@thispage@hook
+    \let\@begindvi\sc@begindvi
+    \@begindvi}%
+  \gdef\sc@thispage@hook{}}
+%    \end{macrocode}
+% \end{macro}
+% 
+% As the very last thing, the |\AtBeginDocument| macro is called to
+% insert the \Lpack{everypage} initialization routine in the queue of
+% commands to be executed when the actual document begins. In this
+% way, the \Lpack{everypage} initialization code is run \emph{after}
+% other packages are loaded.
+%    \begin{macrocode} 
+\AtBeginDocument{\sc@ep@init}
+\endinput
+%    \end{macrocode}
+%
+% \Finale
+% \PrintIndex
+%
+%% \CharacterTable
+%%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%%   Digits        \0\1\2\3\4\5\6\7\8\9
+%%   Exclamation   \!     Double quote  \"     Hash (number) \#
+%%   Dollar        \$     Percent       \%     Ampersand     \&
+%%   Acute accent  \'     Left paren    \(     Right paren   \)
+%%   Asterisk      \*     Plus          \+     Comma         \,
+%%   Minus         \-     Point         \.     Solidus       \/
+%%   Colon         \:     Semicolon     \;     Less than     \<
+%%   Equals        \=     Greater than  \>     Question mark \?
+%%   Commercial at \@     Left bracket  \[     Backslash     \\
+%%   Right bracket \]     Circumflex    \^     Underscore    \_
+%%   Grave accent  \`     Left brace    \{     Vertical bar  \|
+%%   Right brace   \}     Tilde         \~}
+\endinput
+
+%%% Local Variables: 
+%%% mode: doctex
+%%% TeX-master: t
+%%% End: 
+
