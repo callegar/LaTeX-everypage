@@ -34,7 +34,7 @@
 %
 % \fi
 %
-% \CheckSum{41}
+% \CheckSum{44}
 %
 % \def\filename{everypage.dtx}
 % \def\fileversion{1.0}
@@ -178,26 +178,25 @@
 % The internal initialization code of the package. The package works
 % by redefining the normal |\@outputpage| routine that takes care of
 % outputting pages, so that the modified version first calls a special
-% preamble, and then calls the original |\@outputpage| code. 
+% preamble, and then calls the original |\@outputpage| code and
+% finally a postamble. 
 %    \begin{macrocode}
 \newcommand*{\sc@ep@init}{%    
   \let\sc@op@saved\@outputpage
   \def\@outputpage{%
     \sc@op@preamble
-    \sc@op@saved}}
+    \sc@op@saved
+    \sc@op@postamble}}
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{\sc@op@preamble}
 % The outputpage preamble contains instructions to redefine the
 % |\@begindvi| macro that is called at every page output by the
-% original |\@outputpage| code. Then, the hooks for the current page
-% are cleared.  Specifically, the |\@begindvi| macro is redefined so
-% that first the hooks are called and then the normal |\@begindvi| is
-% restored to the original code and run. Restoring |\@begindvi| before
-% actually running it is indispensible, because a usual trick of the
-% code that one normally finds in |\@begindvi| is to redefine
-% |\@begindvi| itself.
+% original |\@outputpage| code. 
+% Specifically: first the original |\@begindvi| is saved; then the
+% hooks are called; then the hooks for the current page
+% are cleared; eventually, the saved |\@begindvi| is called.
 %    \begin{macrocode}
 \newcommand*{\sc@op@preamble}{%
   \let\sc@begindvi\@begindvi
@@ -205,9 +204,23 @@
     \sc@everypage@hook
     \sc@thispage@hook
     \gdef\sc@thispage@hook{}
-    \let\@begindvi\sc@begindvi
-    \@begindvi}}
+    \sc@begindvi}}
 %    \end{macrocode}
+% \end{macro}
+% 
+% \begin{macro}{\sc@op@postamble}
+% The outputpage postamble simply restores the |\@begindvi| command to
+% the saved value. 
+%    \begin{macrocode}
+\newcommand*{\sc@op@postamble}{%
+  \let\@begindvi\sc@begindvi}
+%    \end{macrocode}
+% Note that in exceptional cases this might not be the intended
+% behaviour. For instance, consider situations where 
+% the |\@begindvi| is hacked by some other package to modify
+% itself. By restoring the saved value, one might lose the
+% modifications. This potential issue is currently under
+% investigation. 
 % \end{macro}
 % 
 % As the very last thing, the |\AtBeginDocument| macro is called to
