@@ -1,12 +1,12 @@
-The "everypage" package extends LaTeX providing hooks to perform actions on
-every page or on the current page. Specifically, actions are performed after the
-page is composed, but before it is shipped, so they can be used to prepare the
-output page in tasks like putting watermarks in the background, setting the next
-page layout, etc. The package reminds in some sense "bobhook.sty" by Karsten
-Tinnefeld, but it differs in the way hooks are implemented, as detailed in the
-"everypage" documentation.
+The everypage package extends LaTeX providing hooks to do actions on every page
+or on the current page. Speciﬁcally, actions are performed before the page is
+shipped, so they can be used to put watermarks in the background of a page, or
+to set the page layout. The package reminds in some sense bobhook by Karsten
+Tinnefeld, but it differs in the way in which the hooks are implemented, as
+detailed in the following. In some sense it may also be related to the package
+everyshi by Martin Schroeder, but again the implementation is different.
 
-The "everypage" package is copyright 2006
+The "everypage" package is copyright 2006-2007
 by Sergio Callegari <sergio.callegari@gmail.com>
 
 It comprises this README file, as well as files
