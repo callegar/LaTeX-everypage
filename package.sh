@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PKGNAME=everypage
-PKGVERS=1-0
+PKGVERS=1-1
 PKGCNT=("everypage.dtx" "everypage.ins" "README")
 
 mkdir -p buildpkg/"$PKGNAME"_"$PKGVERS"
