@@ -68,6 +68,9 @@
 %   set the page layout. The package reminds in some sense
 %   \Lpack{bobhook} by Karsten Tinnefeld, but it differs in the way in
 %   which the hooks are implemented, as detailed in the following.
+%   In some sense it may also be related to the package
+%   \Lpack{everyshi} by Martin Schroeder, but again the implementation
+%   is different.
 % \end{abstract}
 % 
 % \section{Introduction}
@@ -89,19 +92,19 @@
 % \item there is no formatting inherent in the hooks. If one wants to
 %   put some watermark on a page, it is his own duty to put in the
 %   hook the code to place the watermark in the right position. Also
-%   note that the hooks code should \emph{eat up no space} in the page.
-%   Again, if the hooks are meant to place some material on the page,
-%   it is the duty of the hook programmer to put code in the hooks to
-%   pretend that the material has zero width and zero height.
+%   note that the hooks code should \emph{eat up no space} in the
+%   page.  Again, if the hooks are meant to place some material on the
+%   page, it is the duty of the hook programmer to put code in the
+%   hooks to pretend that the material has zero width and zero height.
 %   The implementation is \emph{lighter} than the \Lpack{bobhook} one,
 %   and possibly more flexible, since one is not limited by any
 %   pre-coded formatting for the hooks. On the other hand it is
 %   possibly more difficult to use. Nonetheless, it is easy to think
-%   of other packages relying on \Lpack{bobhook} and delivering more
-%   user-friendly \emph{task specific} interfaces. The packages
-%   \Lpack{flippdf} meant to deliver mirrored pages in a PDF document
-%   and \Lpack{draftwatermark} meant to add a watermark to document
-%   pages are examples of this.
+%   of other packages relying on \Lpack{everypage} to deliver more
+%   user-friendly and \emph{task specific} interfaces. Already there
+%   are a couple of them: the package \Lpack{flippdf} produces
+%   mirrored pages in a PDF document and \Lpack{draftwatermark}
+%   watermarks document pages.
 % \item similarly to \Lpack{bobhook} and \Lpack{watermark}, the
 %   package relies on the manipolatoin of the internal \LaTeX\ macro
 %   |\@begindvi| to do the job. However, the redefinition of
@@ -111,6 +114,12 @@
 %   makes no special assumption on the initial code that |\@begindvi|
 %   might contain.
 % \end{enumerate}
+%
+% Also in some sense \Lpack{everypage} can be related to package
+% \Lpack{everyshi} by Martin Schroeder, but it differs radically from
+% it in the implementation. In fact,\Lpack{everypage} operates by
+% manipulation of the |\@begindvi| macro, rather than at the
+% lower level |\shipout| macro.
 % 
 % \section{User interface}
 % \DescribeMacro{\AddEverypageHook}\DescribeMacro{\AddThispageHook}
