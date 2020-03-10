@@ -21,7 +21,10 @@
 %
 %<*driver>
 \documentclass{ltxdoc}
-\usepackage{mathptmx, helvet, courier}
+\usepackage{mathptmx}
+\usepackage[scaled=0.92]{helvet}
+\usepackage{courier}
+\usepackage{hologo}
 \EnableCrossrefs
 \DoNotIndex{\def,\gdef,\let,\NeedsTeXFormat,\newcommand}
 \DoNotIndex{\ProvidesPackage,\endinput}
@@ -39,7 +42,7 @@
 % \def\filename{everypage.dtx}
 % \def\fileversion{1.1}
 % \def\filedate{2007/06/20}
-% \def\docdate{2007/06/20}
+% \def\docdate{2020/03/09}
 %
 % \newcommand*{\Lpack}[1]{\textsf {#1}}           ^^A typeset a package
 % \newcommand*{\Lopt}[1]{\textsf {#1}}            ^^A typeset an option
@@ -63,14 +66,13 @@
 % \begin{abstract}
 %   The \Lpack{everypage} package extends \LaTeX\ providing hooks to do
 %   actions on every page or on the current page. Specifically, actions
-%   are performed \emph{before} the page is shipped, so they can be
-%   used to put watermarks \emph{in the background} of a page, or to
-%   set the page layout. The package reminds in some sense
-%   \Lpack{bobhook} by Karsten Tinnefeld, but it differs in the way in
-%   which the hooks are implemented, as detailed in the following.
-%   In some sense it may also be related to the package
-%   \Lpack{everyshi} by Martin Schroeder, but again the implementation
-%   is different.
+%   are performed \emph{before} the page is shipped, so they can be used
+%   to put watermarks \emph{in the background} of a page, or to set the
+%   page layout. The package reminds in some sense \Lpack{bobhook} by
+%   Karsten Tinnefeld, but it differs in the way in which the hooks are
+%   implemented.  In some sense it may also be related to the package
+%   \Lpack{everyshi} by Martin Schroeder, but again the implementation is
+%   different.
 % \end{abstract}
 % 
 % \section{Introduction}
@@ -89,37 +91,33 @@
 % implemented:
 % 
 % \begin{enumerate}
-% \item there is no formatting inherent in the hooks. If one wants to
-%   put some watermark on a page, it is his own duty to put in the
-%   hook the code to place the watermark in the right position. Also
-%   note that the hooks code should \emph{eat up no space} in the
-%   page.  Again, if the hooks are meant to place some material on the
-%   page, it is the duty of the hook programmer to put code in the
-%   hooks to pretend that the material has zero width and zero height.
-%   The implementation is \emph{lighter} than the \Lpack{bobhook} one,
-%   and possibly more flexible, since one is not limited by any
-%   pre-coded formatting for the hooks. On the other hand it is
-%   possibly more difficult to use. Nonetheless, it is easy to think
-%   of other packages relying on \Lpack{everypage} to deliver more
-%   user-friendly and \emph{task specific} interfaces. Already there
-%   are a couple of them: the package \Lpack{flippdf} produces
-%   mirrored pages in a PDF document and \Lpack{draftwatermark}
-%   watermarks document pages.
-% \item similarly to \Lpack{bobhook} and \Lpack{watermark}, the
-%   package relies on the manipolatoin of the internal \LaTeX\ macro
-%   |\@begindvi| to do the job. However, the redefinition of
-%   |\@begindvi| is here postponed as much as possible, striving to
-%   avoid interference with other packages using |\AtBeginDvi| or
-%   anyway manipulating |\@begindvi|. Specifically \Lpack{everypage}
-%   makes no special assumption on the initial code that |\@begindvi|
-%   might contain.
+% \item there is no formatting inherent in the hooks. If one wants to put
+%   some watermark on a page, it is his own duty to put in the hook the
+%   code to place the watermark in the right position. Also note that the
+%   hooks code should \emph{eat up no space} in the page.  Again, if the
+%   hooks are meant to place some material on the page, it is the duty of
+%   the hook programmer to put code in the hooks to pretend that the
+%   material has zero width and zero height.  The implementation is
+%   \emph{lighter} than the \Lpack{bobhook} one, and possibly more
+%   flexible, since one is not limited by any pre-coded formatting. On the
+%   other hand it is possibly more difficult to use. Nonetheless, other
+%   packages can build on \Lpack{everypage} to deliver more user-friendly
+%   and \emph{task specific} interfaces. Already there are a couple of
+%   them: the package \Lpack{flippdf} produces mirrored pages in a PDF
+%   document and \Lpack{draftwatermark} watermarks document pages.
+% \item similarly to \Lpack{bobhook} and \Lpack{watermark}, the package
+%   relies on the manipulation of the internal \LaTeX\ macro |\@begindvi|
+%   to do the job. However, the redefinition of |\@begindvi| is here
+%   postponed as much as possible, striving to avoid interference with
+%   other packages using |\AtBeginDvi| or anyway manipulating
+%   |\@begindvi|. Specifically \Lpack{everypage} makes no special
+%   assumption on the initial code that |\@begindvi| might contain.
 % \end{enumerate}
 %
-% Also in some sense \Lpack{everypage} can be related to package
-% \Lpack{everyshi} by Martin Schroeder, but it differs radically from
-% it in the implementation. In fact,\Lpack{everypage} operates by
-% manipulation of the |\@begindvi| macro, rather than at the
-% lower level |\shipout| macro.
+% In some sense, \Lpack{everypage} can also be related to package
+% \Lpack{everyshi} by Martin Schroeder, but it differs radically from it
+% in the implementation. In fact, \Lpack{everypage} operates on the
+% |\@begindvi| macro, rather than at the lower level |\shipout| macro.
 % 
 % \section{User interface}
 % \DescribeMacro{\AddEverypageHook}\DescribeMacro{\AddThispageHook}
@@ -133,12 +131,12 @@
 % specific conditions are met, conditionals must be included in the
 % hooks.
 % 
-% Also note that no particular assumption is made on the \LaTeX\
-% output driver, so \Lpack{everypage} should work equally well with
-% \LaTeX\ and pdf\LaTeX. Furthermore, the package should work equally
-% well with dvi, dvips, etc.\@ output drivers. Obviously, the final
-% compatibility with the different output drivers depends on the
-% actual code that is placed in the hooks.
+% Also note that no particular assumption is made on the \LaTeX\ output
+% driver, so \Lpack{everypage} should work equally well with \LaTeX,
+% \hologo{pdfLaTeX}, \hologo{LuaLaTeX}, or \hologo{XeLaTeX}. Similarly,
+% the package should work equally well with dvi, dvips, etc.\@ output
+% drivers. Obviously, the final compatibility with the different output
+% drivers depends on the actual code that is placed in the hooks.
 %
 % For usage examples, please see the \Lpack{flippdf} and
 % \Lpack{draftwatermark} packages.
