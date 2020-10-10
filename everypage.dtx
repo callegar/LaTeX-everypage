@@ -1,6 +1,6 @@
 % \iffalse meta-comment
 %
-% Copyright 2006-2020
+% Copyright 2006-2007, 2020
 % Sergio Callegari <sergio.callegari@gmail.com>
 %
 % ---------------------------------------------
@@ -22,12 +22,11 @@
 %<*driver>
 \documentclass{ltxdoc}
 \usepackage{mathptmx}
+\usepackage[T1]{fontenc}
 \usepackage[scaled=0.92]{helvet}
-\usepackage{courier}
+% \usepackage{courier}
 \usepackage{hologo}
 \EnableCrossrefs
-\DoNotIndex{\def,\gdef,\let,\NeedsTeXFormat,\newcommand}
-\DoNotIndex{\ProvidesPackage,\endinput}
 \CodelineIndex
 \RecordChanges
 \begin{document}
@@ -37,12 +36,19 @@
 %
 % \fi
 %
-% \CheckSum{44}
+% \DoNotIndex{\@ifundefined, \g@addto@macro}
+% \DoNotIndex{\def, \gdef, \let, \newcommand}
+% \DoNotIndex{\MessageBreak, \PackageWarningNoLine, \NeedsTeXFormat}
+% \DoNotIndex{\ProvidesPackage, \RequirePackage}
+% \DoNotIndex{\put}
+% \DoNotIndex{\endinput}
+%
+% \CheckSum{71}
 %
 % \def\filename{everypage.dtx}
-% \def\fileversion{1.2}
-% \def\filedate{2020/10/10}
-% \def\docdate{2020/10/10}
+% \def\fileversion{2.0}
+% \def\filedate{2020/10/11}
+% \def\docdate{2020/10/11}
 %
 % \newcommand*{\Lpack}[1]{\textsf {#1}}           ^^A typeset a package
 % \newcommand*{\Lopt}[1]{\textsf {#1}}            ^^A typeset an option
@@ -63,93 +69,321 @@
 %
 % \maketitle
 %
+% \section*{WARNING}
+% \changes{R2.0}{2020/10/11}{Package is now in a `legacy' status.}
+% 
+% This package is now in \emph{legacy status}. Functionality similar to
+% that provided by this package has been directly implemented in \LaTeX\
+% since its 2020 Fall release. Do not use \Lpack{everypage} in new
+% documents and do not rely on it in new packages or classes of
+% yours.
+%
+% \smallskip
+% When running on a pre-2020-10-01 version of \LaTeX, \Lpack{everypage}
+% will now fall back to \Lpack{everypage-1x}, its own past
+% code base.\smallskip
+%
+% When running on a modern \LaTeX, \Lpack{everypage} will strive to
+% provide its legacy interfaces by using the newer \LaTeX\ facilities.
+% However, full equivalence is not possible and breakage may occur. When
+% truly needed, try loading \Lpack{everypage-1x} in place of
+% \Lpack{everypage} to force usage of the old code base. This is expected
+% to keep working for a few more \LaTeX\ release cycles after Fall 2020.
+%
+% \bigskip\bigskip
+%
 % \begin{abstract}
-%   The \Lpack{everypage} package extends \LaTeX\ providing hooks to do
-%   actions on every page or on the current page. Specifically, actions
-%   are performed \emph{before} the page is shipped, so they can be used
-%   to put watermarks \emph{in the background} of a page, or to set the
-%   page layout. The package reminds in some sense \Lpack{bobhook} by
-%   Karsten Tinnefeld, but it differs in the way in which the hooks are
-%   implemented.  In some sense it may also be related to the package
-%   \Lpack{everyshi} by Martin Schroeder, but again the implementation is
-%   different.
+%   The \Lpack{everypage} package was meant to extend \LaTeX\ providing
+%   hooks to do actions on every page or on the current page. Currently,
+%   similar functionality is directly provided by \LaTeX. Specifically,
+%   \Lpack{everypage} supports actions performed \emph{before} the page is
+%   shipped, so they can be used to put watermarks \emph{in the
+%   background} of a page, or to set the page layout. The package is in
+%   many ways similar to \Lpack{bobhook} by Karsten Tinnefeld, but it
+%   differs in the way in which the hooks are implemented. In some sense,
+%   it may also be related to package \Lpack{everyshi} by Martin
+%   Schroeder, but again the implementation is different.
 % \end{abstract}
 % 
 % \section{Introduction}
-% 
-% This program adds two \LaTeX\ hooks that get run when document
-% pages are finalized and output to the dvi or pdf
+%
+% Until a recent past, \LaTeX\ provided no explicit hooks to be run as
+% documents pages were finalized and output to the dvi or pdf
+% file. Consequently, many solutions were developed to work around this
+% limitation and to offer features (e.g., watermarks) that would otherwise
+% be impossible. These solution included packages such as
+% \Lpack{everyshi}, \Lpack{bobhook} and \Lpack{watermark}. Package
+% \Lpack{everypage} was a solution providing plumbing that could be used
+% in higher level packages such as \Lpack{draftwatermark} (watermarking)
+% and \Lpack{flippdf} (print preprocessing) to mention a couple of them.
+%
+% All of these extensions relied on applying modifications to some \LaTeX\
+% internals and as such were prone to subtle interactions with other
+% packages and breakage. The situation has been cleared by the 2020 Fall
+% \LaTeX\ release where an official and generic support for hooks has been
+% introduced.
+%
+% As of today, \Lpack{everypage} can be considered obsolete. It needs to
+% remain around because older releases of \LaTeX\ are still in use and
+% legacy code exist that is based on the interfaces it exposes. However,
+% no new document, class or package should be based on it. Furthermore, it
+% can be expected that existing packages that use \Lpack{everypage} will
+% progressively learn to rely directly on the new \LaTeX\ hook mechanism.
+%
+% This manual is meant to aid the transition by showing how
+% \Lpack{everypage} is now being updated to cater both for older and newer
+% \LaTeX\ kernels. Specifically, it illustrates:
+% \begin{enumerate}
+% \item how \Lpack{everypage} is now actually split in two packages:
+%   \Lpack{everypage-1x}, providing the old code base; and
+%   \Lpack{everypage} itself, that strives to implement the legacy
+%   interface on top of the new mechanisms offered by \LaTeX;
+% \item how \Lpack{everypage} can automatically import the old code base
+%   as needed, how loading of the latter can be forced (if absolutely
+%   needed or for comparison) and for how long the old code can be
+%   expected to keep working with newer releases of \LaTeX;
+% \item how the legacy interface of \Lpack{everypage}, once
+%   implemented/emulated on top of the new \LaTeX\ facilities actually
+%   differs from its nominal behavior.
+% \end{enumerate}
+%   
+% \section{The original code base}
+% \label{sec:original}
+% \changes{R1.0}{2006/06/30}{%
+%   Initial release.}
+%
+% The original implementation of \Lpack{everypage}, now available as
+% \Lpack{everypage-1x}, adds two \LaTeX\ hooks that get
+% run when document pages are finalized and output to the dvi or pdf
 % file. Specifically, one hook gets executed on every page, while the
 % other is executed for the current page. Hook actions are are performed
-% \emph{before} the page is output on the medium, and this is
-% important to be able to play with the page layout or to put things
-% \emph{behind} the page contents (e.g., watermarks such as an image,
-% framing, the ``DRAFT'' word, and the like).
+% \emph{before} the page is output on the medium, and this is important to
+% be able to play with the page layout or to put things \emph{behind} the
+% page contents (e.g., watermarks).
+%
+% \subsection{User interface}
+% \label{ssec:ui}
 % 
-% The package reminds in some sense \Lpack{bobhook} by Karsten
-% Tinnefeld, but it differs in the way in which the hooks are
-% implemented:
-% 
+% \DescribeMacro{\AddEverypageHook} The |\AddEverypageHook| command
+% accepts one argument and adds it to the list of hooks that are run
+% before every page is output. Similarly, the
+% \DescribeMacro{\AddThispageHook}|\AddThispageHook| command accepts one
+% argument, however it adds it to the list of hooks that are run before
+% the \emph{current} page is output.
+%
+% The following rules apply:
+%
 % \begin{enumerate}
-% \item there is no formatting inherent in the hooks. If one wants to put
-%   some watermark on a page, it is his own duty to put in the hook the
-%   code to place the watermark in the right position. Also note that the
-%   hooks code should \emph{eat up no space} in the page.  Again, if the
-%   hooks are meant to place some material on the page, it is the duty of
-%   the hook programmer to put code in the hooks to pretend that the
-%   material has zero width and zero height.  The implementation is
-%   \emph{lighter} than the \Lpack{bobhook} one, and possibly more
-%   flexible, since one is not limited by any pre-coded formatting. On the
-%   other hand it is possibly more difficult to use. Nonetheless, other
-%   packages can build on \Lpack{everypage} to deliver more user-friendly
-%   and \emph{task specific} interfaces. Already there are a couple of
-%   them: the package \Lpack{flippdf} produces mirrored pages in a PDF
-%   document and \Lpack{draftwatermark} watermarks document pages.
-% \item similarly to \Lpack{bobhook} and \Lpack{watermark}, the package
-%   relies on the manipulation of the internal \LaTeX\ macro |\@begindvi|
-%   to do the job. However, the redefinition of |\@begindvi| is here
-%   postponed as much as possible, striving to avoid interference with
-%   other packages using |\AtBeginDvi| or anyway manipulating
-%   |\@begindvi|. Specifically \Lpack{everypage} makes no special
-%   assumption on the initial code that |\@begindvi| might contain.
-% \end{enumerate}
-%
-% In some sense, \Lpack{everypage} can also be related to package
-% \Lpack{everyshi} by Martin Schroeder, but it differs radically from it
-% in the implementation. In fact, \Lpack{everypage} operates on the
-% |\@begindvi| macro, rather than at the lower level |\shipout| macro.
-% 
-% \section{User interface}
-% \DescribeMacro{\AddEverypageHook}\DescribeMacro{\AddThispageHook}
-% The |\AddEverypageHook| accepts one argument and adds it to the list
-% of hooks that are run before every page is output. The
-% |\AddThispageHook| accepts one argument and adds it to the list of
-% hooks that are run before the current page is output.
-%
-% Note that once hooks are stacked, there is no way to unstack them,
-% nor to clear them. In order to have hooks that get run only when
-% specific conditions are met, conditionals must be included in the
-% hooks.
-% 
-% Also note that no particular assumption is made on the \LaTeX\ output
+% \item once hooks are introduced and stacked in a series, there is no way
+%   to unstack them, nor to clear them;
+% \item in order to have hooks that get run only when specific conditions
+%   are met, conditionals must be included in the hooks;
+% \item \label{itm:formatting}%
+%   there is no formatting inherent in the hooks. If one wants to put some
+%   watermark on a page, it is his own duty to put in the hook the code to
+%   place the watermark in the right position and with the appropriate
+%   appearance and style. When the hooks are run, the page is still empty,
+%   so that one begins filling it at point (1\,inch, 1\,inch) from the top
+%   left corner;
+% \item \label{itm:nospace}%
+%   the hook code should \emph{eat up no space}. This means that hooks
+%   meant to place some material on the page, need to have the material
+%   placed in a box with zero width and height beforehand.
+% \item no particular assumption is made on the \LaTeX\ output
 % driver, so \Lpack{everypage} should work equally well with \LaTeX,
 % \hologo{pdfLaTeX}, \hologo{LuaLaTeX}, or \hologo{XeLaTeX}. Similarly,
 % the package should work equally well with dvi, dvips, etc.\@ output
 % drivers. Obviously, the final compatibility with the different output
 % drivers depends on the actual code that is placed in the hooks.
+% \end{enumerate}
 %
-% For usage examples, please see the \Lpack{flippdf} and
-% \Lpack{draftwatermark} packages.
+% \subsection{Comparison with other packages}
 % 
+% The purpose of the original code base is better understood by comparing
+% it to other packages that were meant to solve related problems at the
+% time when \LaTeX\ had no hook mechanism of its own:
+%
+% \begin{itemize}
+% \item In comparison with \Lpack{bobhook} by Karsten Tinnefeld,
+%   Lpack{everypage} (in its legacy incarnation) used to differ in purpose
+%   and in the hook implementation. Package \Lpack{everypage} was meant to
+%   make no assumption on what one could want to do on every page, whether
+%   to add text, images, or some low-level instruction for the output
+%   driver, or even to perform some accounting task. This made the package
+%   lighter and more flexible at the cost of being more difficult to
+%   use. In other words, \Lpack{everypage} was meant to be more of a
+%   plumbing to be employed in higher level packages;
+% \item in comparison with \Lpack{watermark} by Alexander I.~Rozhenko,
+%   similar considerations could me made. Specifically, \Lpack{watermark}
+%   is explicitly targeted at making it easy to put watermarks on document
+%   pages, while \Lpack{everypage} is lower level.
+% \item in comparison to both \Lpack{bobhook} and \Lpack{watermark},
+%   \Lpack{everypage} used to employ a similar low level mechanism, by
+%   manipulation of the internal \LaTeX\ macro |\@begindvi| to do the
+%   job. However, the redefinition of |\@begindvi| in \Lpack{everypage}
+%   was postponed as much as possible, striving to avoid interference with
+%   other packages using |\AtBeginDvi| or anyway manipulating
+%   |\@begindvi|. Furthermore, \Lpack{everypage} made no special
+%   assumption on the initial code that |\@begindvi| might contain.
+% \item in comparison with \Lpack{everyshi} by Martin Schroeder,
+%   \Lpack{everypage} used to be similarly low level, but relied on
+%   changing the |\@begindvi| macro, rather than the even lower-level
+%   |\shipout| macro.
+% \end{itemize}
+%
+% \subsection{Known applications of the \Lpack{everypage} code}
+%
+% Package \Lpack{everypage} has historically found application in at least
+% two higher level packages, namely:
+% \begin{itemize}
+% \item \Lpack{draftwatermark}, meant at providing extended facilities for
+%   page watermarking on all \LaTeX\ engines and output drivers; and
+% \item \Lpack{flippdf}, meant at catering for a frequent preprint
+%   requirement, where publisher may require a document with
+%   \emph{mirrored} pages to get the best results out of a photographic
+%   printout process.
+% \end{itemize}
+%
+% \section{The new code base}
+% \changes{R2.0}{2020/10/11}{%
+%   Complete package rewrite to take advantage of the new
+%   LaTeX hook mechanisms introduced in the Fall 2020 release.}
+%   
+% The new code base differs from the old one because it does not touch
+% any \LaTeX\ internals. Conversely it relies on the hook mechanism that
+% is officially provided by \LaTeX\ since its 2020 fall release.
+% Obviously, this has no other purpose than to provide back
+% compatibility for older \LaTeX\ code written before such \LaTeX\
+% release and relying on the original \Lpack{everypage} interfaces.
+%
+% To this aim, the new code base does the following:
+% \begin{enumerate}
+% \item complains out loud, reminding that new code should not be based on
+%   \Lpack{everypage}, but rather make direct usage of the new \LaTeX\
+%   interfaces;
+% \item checks whether the new \LaTeX\ interfaces are actually
+%   available. If this is not the case, it resorts to loading
+%   \Lpack{everypage-1x} that provides the old code base;
+% \item \label{itm:addtohook}%
+%   implements/emulates the |\AddEverypageHook| and |\AddThispageHook|
+%   commands on top of the new |\AddToHook| and |\AddToHookNext| \LaTeX\
+%   commands.
+% \end{enumerate}
+%
+% With specific reference to point \ref{itm:addtohook} above, note that
+% the new hook mechanism provided by \LaTeX\ is extensively documented in
+% issue 32 of \emph{\LaTeX\ News} and in file
+% |lthooks-doc.pdf|. Furthermore, consider that \Lpack{everypage} employs
+% hooks in the \emph{shipout} class, which are documented in file
+% |ltshipout-doc.pdf|.
+%
+% \subsection{Compatibility of the new code with the original \Lpack{everypage}
+%   interface}
+%
+% Because the implementation is different and due to choices (in fact,
+% quite reasonable ones) by the \LaTeX\ developers, the new implementation
+% of \Lpack{everypage} cannot be exactly equivalent to the original one
+% (hence, please, do not open bugs for this!).
+%
+% The main difference is the hook code provided by the user now gets
+% wrapped in a |\put| command, inside a |picture| environment with
+% |\unitlength| at 1\,pt. This is because \Lpack{everypage} relies on a
+% |shipout/background| type hook. The |\put| command typesets material at
+% (1\,in, -1\,in) to emulate the original coordinate system of
+% \Lpack{everypage}. This means that some of the points about the
+% interface in section~\ref{ssec:ui} do not apply anymore (or at least do
+% not apply in the same way). Specifically, point \ref{itm:formatting}
+% about lack of any pre-canned formatting is not completely true anymore,
+% because of the implicit picture environment. Furthermore, point
+% \ref{itm:nospace} about the need not to eat up space can now be
+% completely ignored.
+%
+% While the changes described above seem to go in the direction of less
+% rules and less concern, this might not be always true and subtle
+% breakage of legacy code may happen in corner cases.
+%
+% \section{Forcing usage of the older code base}
+%
+% The usage of the older code base of \Lpack{everypage} can be forced by
+% simply substituting |\usepackage{everypage-1x}| for
+% |\usepackage{everypage}|. In this case, no warning about the package
+% obsolescence is emitted, because it is assumed that the user knows what
+% he/she is doing. However, explicitly requiring \Lpack{everypage-1x}
+% is obviously discouraged.
+%
+% The old code base actually works just fine with the Fall 2020 \LaTeX\
+% release and it will probably keep to do so for a few more \LaTeX\
+% release cycles. This is mostly up to the \LaTeX\ developers and their
+% will to maintain untouched some internal deprecated interfaces. In any case,
+% |\usepackage{everypage-1x}| will eventually stop working and is now
+% declared in an \emph{unmaintained state}.
+%
+%
 % \StopEventually {}
-% 
 % \section{Implementation}
-%
+% \subsection{Implementation of \Lpack{everypage}}
+% \iffalse
+%<*everypage>
+% \fi
 % Announce the name and version of the package, which requires
 % \LaTeXe.
 %    \begin{macrocode}
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{everypage}%
+  [2020/10/11 R2.0 Hooks to run on every page]
+%    \end{macrocode}
+% Complain out loud about the package being obsolete.
+%    \begin{macrocode}
+\PackageWarningNoLine{everypage}{%
+  Functionality similar to this package has recently\MessageBreak
+  been implemented in LaTeX. This package is now in\MessageBreak
+  legacy status.\MessageBreak
+  Please, don't use it in new documents and packages}
+%    \end{macrocode}
+% Depending on the actual functionalities provided by \LaTeX\ consider
+% loading \Lpack{everypage-1x}. If so doing, warn about this too and
+% stop. Otherwise give some more warnings.
+%    \begin{macrocode} 
+\@ifundefined{AddToHook}{%
+  \PackageWarningNoLine{everypage}{%
+    You appear to be running a version of LaTeX\MessageBreak
+    too old to provide the new functionality.\MessageBreak
+    Forcing fallback to `everypage-1x` that\MessageBreak
+    uses an older code base}
+  \RequirePackage{everypage-1x}
+  \endinput}{%
+  \PackageWarningNoLine{everypage}{%
+    You appear to be running a version of LaTeX\MessageBreak
+    providing the new functionality.\MessageBreak
+    Doing the best to deliver the original `everypage`\MessageBreak
+    interface on top of it. Strict equivalence is\MessageBreak
+    not possible, breakage may occur.\MessageBreak
+    If truly needed, Use `everypage-1x` to force the\MessageBreak
+    loading of an older code base}}
+%    \end{macrocode}
+% \begin{macro}{\AddEverypageHook}\begin{macro}{\AddThispageHook}%
+% Finally, implement the \Lpack{everypage} interface on top of the \LaTeX\
+% |shipout/background| hooks.
+%    \begin{macrocode}
+\newcommand*{\AddEverypageHook}[1]{%
+  \AddToHook{shipout/background}{\put(1in,-1in){#1}}}
+\newcommand*{\AddThispageHook}[1]{%
+  \AddToHookNext{shipout/background}{\put(1in,-1in){#1}}}
+%    \end{macrocode}
+% \end{macro}\end{macro}
+% \iffalse
+%</everypage>
+% \fi
+%
+% \subsection{Implementation of \Lpack{everypage-1x}}
+% \iffalse
+%<*everypage-1x>
+% \fi
+% Announce the name and version of the package, which requires
+% \LaTeXe.
+%    \begin{macrocode}
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{everypage-1x}%
   [2020/10/10 1.2 Hooks to run on every page]
 %    \end{macrocode}
 %
@@ -189,6 +423,11 @@
 % \end{macro}
 %
 % \begin{macro}{\sc@op@preamble}
+% \changes{R1.1}{2007/06/20}{%
+%   Fix an out of memory condition.}
+% \changes{R1.2}{2020/10/10}{%
+%   Reorder operations to take care of code to execute at the beginning of
+%   the output  before the `everypage' hooks.}
 % The outputpage preamble contains instructions to redefine the
 % |\@begindvi| macro that is called at every page output by the
 % original |\@outputpage| code. 
@@ -228,31 +467,33 @@
 % other packages are loaded.
 %    \begin{macrocode} 
 \AtBeginDocument{\sc@ep@init}
-\endinput
 %    \end{macrocode}
+% \iffalse
+%</everypage-1x>
+% \fi
 %
 % \Finale
+% \PrintChanges
 % \PrintIndex
 %
-%% \CharacterTable
-%%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
-%%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
-%%   Digits        \0\1\2\3\4\5\6\7\8\9
-%%   Exclamation   \!     Double quote  \"     Hash (number) \#
-%%   Dollar        \$     Percent       \%     Ampersand     \&
-%%   Acute accent  \'     Left paren    \(     Right paren   \)
-%%   Asterisk      \*     Plus          \+     Comma         \,
-%%   Minus         \-     Point         \.     Solidus       \/
-%%   Colon         \:     Semicolon     \;     Less than     \<
-%%   Equals        \=     Greater than  \>     Question mark \?
-%%   Commercial at \@     Left bracket  \[     Backslash     \\
-%%   Right bracket \]     Circumflex    \^     Underscore    \_
-%%   Grave accent  \`     Left brace    \{     Vertical bar  \|
-%%   Right brace   \}     Tilde         \~}
+% \CharacterTable
+%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%   Digits        \0\1\2\3\4\5\6\7\8\9
+%   Exclamation   \!     Double quote  \"     Hash (number) \#
+%   Dollar        \$     Percent       \%     Ampersand     \&
+%   Acute accent  \'     Left paren    \(     Right paren   \)
+%   Asterisk      \*     Plus          \+     Comma         \,
+%   Minus         \-     Point         \.     Solidus       \/
+%   Colon         \:     Semicolon     \;     Less than     \<
+%   Equals        \=     Greater than  \>     Question mark \?
+%   Commercial at \@     Left bracket  \[     Backslash     \\
+%   Right bracket \]     Circumflex    \^     Underscore    \_
+%   Grave accent  \`     Left brace    \{     Vertical bar  \|
+%   Right brace   \}     Tilde         \~}
 \endinput
 
-%%% Local Variables: 
-%%% mode: doctex
-%%% TeX-master: t
-%%% End: 
-
+% %% Local Variables: 
+% %% mode: doctex
+% %% TeX-master: t
+% %% End:

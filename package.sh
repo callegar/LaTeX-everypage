@@ -1,8 +1,8 @@
 #!/bin/bash
 
 PKGNAME=everypage
-PKGVERS=1-2
-PKGCNT=("everypage.dtx" "everypage.ins" "README")
+PKGVERS=2-0
+PKGCNT=("everypage.dtx" "everypage.ins" "README.md")
 
 mkdir -p buildpkg/"$PKGNAME"_"$PKGVERS"
 cp "${PKGCNT[@]}" buildpkg/"$PKGNAME"_"$PKGVERS"
