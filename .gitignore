@@ -1,7 +1,7 @@
 *~
 buildpkg
-everypage.aux
-everypage.log
+*.aux
+*.log
 everypage.glo
 everypage.gls
 everypage.idx
@@ -9,3 +9,4 @@ everypage.ilg
 everypage.ind
 everypage.pdf
 everypage.sty
+everypage-1x.sty
