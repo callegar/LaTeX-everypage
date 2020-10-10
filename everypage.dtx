@@ -1,6 +1,6 @@
 % \iffalse meta-comment
 %
-% Copyright 2006-2007
+% Copyright 2006-2020
 % Sergio Callegari <sergio.callegari@gmail.com>
 %
 % ---------------------------------------------
@@ -40,9 +40,9 @@
 % \CheckSum{44}
 %
 % \def\filename{everypage.dtx}
-% \def\fileversion{1.1}
-% \def\filedate{2007/06/20}
-% \def\docdate{2020/03/09}
+% \def\fileversion{1.2}
+% \def\filedate{2020/10/10}
+% \def\docdate{2020/10/10}
 %
 % \newcommand*{\Lpack}[1]{\textsf {#1}}           ^^A typeset a package
 % \newcommand*{\Lopt}[1]{\textsf {#1}}            ^^A typeset an option
@@ -150,7 +150,7 @@
 %    \begin{macrocode}
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{everypage}%
-  [2007/06/20 1.1 Hooks to run on every page]
+  [2020/10/10 1.2 Hooks to run on every page]
 %    \end{macrocode}
 %
 % \begin{macro}{\sc@everypage@hook}\begin{macro}{\sc@everypage@hook}
@@ -199,10 +199,10 @@
 \newcommand*{\sc@op@preamble}{%
   \let\sc@begindvi\@begindvi
   \def\@begindvi{%
+    \sc@begindvi
     \sc@everypage@hook
     \sc@thispage@hook
-    \gdef\sc@thispage@hook{}
-    \sc@begindvi}}
+    \gdef\sc@thispage@hook{}}}
 %    \end{macrocode}
 % \end{macro}
 % 
