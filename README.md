@@ -57,8 +57,7 @@ UPGRADE IS RECOMMENDED
 ## License
 
 Package `everypage` may be distributed and/or modified under the conditions of
-the LaTeX Project Public License, version 1.3. This license is available at
-http://www.latex-project.org/lppl.txt and is part of all distributions of LaTeX
-version 2003/06/01 or later.
+the LaTeX Project Public License, version 1.3c. This license is available at
+https://www.latex-project.org/lppl/lppl-1-3c/.
 
-This work has the LPPL maintenance status "author-maintained".
+This work has the LPPL maintenance status "maintained".
