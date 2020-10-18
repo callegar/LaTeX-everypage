@@ -1,5 +1,6 @@
 # The `everypage` package 
 
+
 ## Warning
 
 This package is now in *legacy status*. Functionality similar to that provided
@@ -53,6 +54,7 @@ or to hang.  Such behaviour was particularly evident in conjunction with the
 draftwatermark package.
 
 UPGRADE IS RECOMMENDED
+
 
 ## License
 
